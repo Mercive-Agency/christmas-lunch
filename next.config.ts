@@ -1,13 +1,15 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // A self-contained server in .next/standalone, which the Dockerfile runs.
+  output: "standalone",
   poweredByHeader: false,
   // No Next.js badge in the corner while developing.
   devIndicators: false,
   // Lets the dev server be opened as 127.0.0.1 as well as localhost.
   allowedDevOrigins: ["127.0.0.1"],
   // The team photos are read from disk by the photo route, so they must ship
-  // with that function on Vercel. They are never in /public.
+  // with the server. They are never in /public.
   outputFileTracingIncludes: {
     "/api/photo/[key]": ["./private/photos/*"],
   },
