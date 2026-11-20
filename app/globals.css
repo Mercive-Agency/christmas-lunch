@@ -304,7 +304,15 @@ body:not(.host) .prog { align-items: center; }
 
 /* Two seconds of chaos before the sign-in screen. Pure CSS, so it always leaves. */
 #splash { position: fixed; inset: 0; z-index: 60; overflow: hidden; display: grid; place-content: center; justify-items: center; gap: 18px; background: var(--red);
-  animation: splashout .45s 2s cubic-bezier(.6, 0, .9, .4) forwards; }
+}
+#splash.go { animation: splashout .45s var(--len, 2s) cubic-bezier(.6, 0, .9, .4) forwards; }
+#splash:not(.go) > :not(.start) { display: none; }
+#splash.go > .start { display: none; }
+#splash:not(.go) { background: radial-gradient(120% 80% at 50% 40%, var(--glow), var(--red) 50%, var(--wine)); }
+.start { position: relative; width: min(230px, 62vw); aspect-ratio: 1; border-radius: 50%; background: var(--cream); color: var(--red); display: grid; place-content: center; gap: 6px;
+  font-size: clamp(26px, 8vw, 34px); font-weight: 500; letter-spacing: -.02em; box-shadow: 0 0 0 0 rgba(241, 196, 107, .7), 0 20px 50px rgba(0, 0, 0, .4); animation: thump .9s ease-in-out infinite; }
+.start small { font-family: var(--mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; font-weight: 400; color: #a3303d; }
+@keyframes thump { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(241, 196, 107, .7), 0 20px 50px rgba(0, 0, 0, .4); } 50% { transform: scale(1.07) rotate(-2deg); } 100% { transform: scale(1); box-shadow: 0 0 0 38px rgba(241, 196, 107, 0), 0 20px 50px rgba(0, 0, 0, .4); } }
 @keyframes splashout { to { opacity: 0; transform: scale(1.7); visibility: hidden; } }
 .gate #fx { z-index: 70; }
 .disco { position: absolute; inset: -60%; opacity: .92; animation: spin .9s linear infinite;

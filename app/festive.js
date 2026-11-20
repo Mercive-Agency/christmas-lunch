@@ -70,11 +70,108 @@ export function festive() {
   }
   if (!reduced) requestAnimationFrame(frame);
 
-  // The two crazy seconds before the sign-in screen: confetti from everywhere.
-  // The splash itself is CSS (it leaves on its own, even if this never runs).
-  const splash = $("splash");
-  const wait = splash && !reduced ? 2000 : 0;
-  if (wait) {
+  // Two seconds of 80s stadium-rock Christmas, built from scratch with Web
+  // Audio: "Jingle Bells" as a synth-brass fanfare over galloping guitar, with
+  // drums, sleigh bells, church bells and a deep "ho ho ho". Browsers only allow sound after a tap, which is why the splash
+  // waits for one.
+  function rock() {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    const ac = new AC();
+    const t0 = ac.currentTime + 0.06;
+    const master = ac.createGain(); master.gain.value = 0.55;
+    const squash = ac.createDynamicsCompressor();
+    master.connect(squash); squash.connect(ac.destination);
+
+    // Guitar: sawtooth power chords into heavy distortion.
+    const shaper = ac.createWaveShaper(), curve = new Float32Array(1024);
+    for (let i = 0; i < 1024; i++) curve[i] = Math.tanh((i / 512 - 1) * 7);
+    shaper.curve = curve;
+    const tone = ac.createBiquadFilter(); tone.type = "lowpass"; tone.frequency.value = 3400;
+    const amp = ac.createGain(); amp.gain.value = 0.5;
+    shaper.connect(tone); tone.connect(amp); amp.connect(master);
+    // Rhythm guitar: chugging power chords.
+    function chord(freq, at, len) {
+      const g = ac.createGain();
+      g.gain.setValueAtTime(0.0001, at); g.gain.linearRampToValueAtTime(0.5, at + 0.008);
+      g.gain.setValueAtTime(0.5, at + len * 0.6); g.gain.exponentialRampToValueAtTime(0.0001, at + len);
+      g.connect(shaper);
+      [1, 1.004, 1.5, 2].forEach((m) => { const o = ac.createOscillator(); o.type = "sawtooth"; o.frequency.value = freq * m; o.connect(g); o.start(at); o.stop(at + len + 0.05); });
+    }
+
+    // The star: a big, bright 80s synth-brass fanfare. Detuned saws through a
+    // filter that opens on every note, with vibrato on the long ones.
+    function brass(freq, at, len) {
+      const f = ac.createBiquadFilter(), g = ac.createGain();
+      f.type = "lowpass"; f.Q.value = 3;
+      f.frequency.setValueAtTime(500, at); f.frequency.exponentialRampToValueAtTime(5200, at + 0.05); f.frequency.exponentialRampToValueAtTime(2600, at + Math.max(0.08, len));
+      g.gain.setValueAtTime(0.0001, at); g.gain.linearRampToValueAtTime(0.2, at + 0.015);
+      g.gain.setValueAtTime(0.2, at + len * 0.8); g.gain.exponentialRampToValueAtTime(0.0001, at + len + 0.04);
+      f.connect(g); g.connect(master);
+      const wobble = ac.createOscillator(), depth = ac.createGain();
+      wobble.frequency.value = 6; depth.gain.setValueAtTime(0, at); depth.gain.linearRampToValueAtTime(len > 0.3 ? freq * 0.012 : 0, at + 0.3);
+      wobble.connect(depth); wobble.start(at); wobble.stop(at + len + 0.1);
+      [[1, -9], [1, 0], [1, 9], [0.5, 0], [1.5, 4]].forEach(([m, cents]) => {
+        const o = ac.createOscillator(); o.type = "sawtooth"; o.frequency.value = freq * m; o.detune.value = cents;
+        depth.connect(o.frequency); o.connect(f); o.start(at); o.stop(at + len + 0.1);
+      });
+    }
+
+    // Drums and bells from one buffer of noise.
+    const noise = ac.createBuffer(1, ac.sampleRate, ac.sampleRate), data = noise.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+    function hiss(at, type, freq, level, len) {
+      const src = ac.createBufferSource(), f = ac.createBiquadFilter(), g = ac.createGain();
+      src.buffer = noise; f.type = type; f.frequency.value = freq;
+      g.gain.setValueAtTime(level, at); g.gain.exponentialRampToValueAtTime(0.0001, at + len);
+      src.connect(f); f.connect(g); g.connect(master); src.start(at); src.stop(at + len + 0.02);
+    }
+    function drum(at, from, to, level, len) {
+      const o = ac.createOscillator(), g = ac.createGain();
+      o.frequency.setValueAtTime(from, at); o.frequency.exponentialRampToValueAtTime(to, at + len * 0.6);
+      g.gain.setValueAtTime(level, at); g.gain.exponentialRampToValueAtTime(0.0001, at + len);
+      o.connect(g); g.connect(master); o.start(at); o.stop(at + len + 0.02);
+    }
+    function chime(at, freq) {
+      [[1, 0.16], [2.76, 0.07], [5.4, 0.03]].forEach(([m, level]) => {
+        const o = ac.createOscillator(), g = ac.createGain();
+        o.frequency.value = freq * m; g.gain.setValueAtTime(level, at); g.gain.exponentialRampToValueAtTime(0.0001, at + 1.4);
+        o.connect(g); g.connect(master); o.start(at); o.stop(at + 1.45);
+      });
+    }
+
+    // "Jingle Bells" as a stadium-rock fanfare in A minor: each "jingle" is a
+    // quick two-note pickup into a long held note. Beats are 0.14 s.
+    const B = 0.14, at = (beat) => t0 + beat * B;
+    const D5 = 587.33, E5 = 659.25, G5 = 783.99, C5 = 523.25;
+    [[D5, 0, 0.5], [E5, 0.5, 0.5], [E5, 1, 2.8], [D5, 4, 0.5], [E5, 4.5, 0.5], [E5, 5, 2.8],
+      [E5, 8, 0.95], [G5, 9, 0.95], [C5, 10, 0.95], [D5, 11, 0.95], [E5, 12, 8]]
+      .forEach(([f, beat, beats]) => brass(f, at(beat), beats * B));
+    // Galloping rhythm guitar underneath: Am, C, then G F G back home to Am.
+    const A2 = 110, C3 = 130.81, G2 = 98, F2 = 87.31;
+    [A2, A2, A2, A2, C3, C3, C3, C3, G2, G2, F2, G2].forEach((root, beat) => {
+      chord(root, at(beat), B * 0.5); chord(root, at(beat + 0.5), B * 0.24); chord(root, at(beat + 0.75), B * 0.24);
+    });
+    chord(A2, at(12), B * 8);
+    for (let beat = 0; beat <= 12; beat++) drum(at(beat), 170, 42, 1, 0.2);                       // kick on every beat
+    [2, 6, 10].forEach((beat) => { hiss(at(beat), "bandpass", 1500, 0.7, 0.24); drum(at(beat), 240, 180, 0.3, 0.1); });  // big snare
+    [[11, 230, 120], [11.5, 170, 85], [11.75, 130, 65]].forEach(([beat, from, to]) => drum(at(beat), from, to, 0.8, 0.18));  // tom fill
+    for (let beat = 0; beat <= 12; beat += 0.5) hiss(at(beat), "highpass", 7500, 0.18, 0.05);     // sleigh bells
+    hiss(at(0), "highpass", 5200, 0.3, 0.7); hiss(at(12), "highpass", 5200, 0.42, 1.4);           // crashes
+    chime(at(0), 1318.5); chime(at(4), 1318.5); chime(at(12), 1318.5); chime(at(12), 1975.5);     // church bells
+
+    try {
+      const ho = new SpeechSynthesisUtterance("Ho! Ho! Ho!");
+      ho.pitch = 0; ho.rate = 1.1; ho.volume = 1; ho.lang = "en-US";
+      speechSynthesis.cancel(); speechSynthesis.speak(ho);
+    } catch {
+      // No voice on this phone; the band plays on.
+    }
+    timers.push(setTimeout(() => ac.close().catch(() => {}), 4500));
+  }
+
+  // The two crazy seconds: confetti from everywhere while the CSS splash runs.
+  function chaos(ms) {
     const COLORS = ["#fbf3e4", "#f1c46b", "#3fa877", "#ff6b78", "#ffffff"];
     const burst = setInterval(() => {
       const x = Math.random() * W, y = Math.random() * H * 0.8;
@@ -85,7 +182,7 @@ export function festive() {
       }
     }, 110);
     timers.push(burst);
-    timers.push(setTimeout(() => clearInterval(burst), wait));
+    timers.push(setTimeout(() => clearInterval(burst), ms));
   }
 
   // Rudolf gallops past along the bottom, leaving sparkles.
@@ -104,19 +201,17 @@ export function festive() {
       if (Date.now() - t0 > 3200) clearInterval(trail);
     }, 60);
   }
-  timers.push(setTimeout(gallop, 3500 + wait));
-  timers.push(setInterval(gallop, 11000));
 
   // Rudolf walks in above the form and hops when booped.
   const hero = $("hero");
-  if (hero && !reduced) {
-    // After the splash, so the walk-in is not hidden behind it.
-    hero.style.visibility = wait ? "hidden" : "";
-    timers.push(setTimeout(() => {
+  function arrive() {
+    if (hero && !reduced) {
       hero.style.visibility = "";
       hero.classList.add("enter", "run");
       timers.push(setTimeout(() => hero.classList.remove("run"), 1900));
-    }, wait));
+    }
+    timers.push(setTimeout(gallop, 3500));
+    timers.push(setInterval(gallop, 11000));
   }
   if (hero) {
     on(hero, "click", () => {
@@ -124,6 +219,48 @@ export function festive() {
       hero.classList.remove("hop"); void hero.offsetWidth; hero.classList.add("hop");
       sparkle(r.left + r.width * 0.91, r.top + r.height * 0.33, 40);
     });
+  }
+
+  // With a splash, everything waits for the tap that starts it.
+  const splash = $("splash"), startButton = $("splash-go");
+  if (splash && startButton && !reduced) {
+    if (hero) hero.style.visibility = "hidden";
+    // A real recording beats the synth. If public/audio/splash.mp3 exists, the
+    // splash plays that instead and lasts as long as the clip (2 to 8 seconds).
+    let clip = null;
+    try {
+      clip = new Audio("/audio/splash.mp3");
+      clip.preload = "auto";
+      on(clip, "error", () => { clip = null; });
+    } catch {
+      clip = null;
+    }
+    const synth = () => { try { rock(); } catch { /* silent party */ } };
+
+    on(startButton, "click", () => {
+      if (splash.classList.contains("go")) return;
+      let ms = 2000;
+      if (clip && clip.readyState >= 1 && Number.isFinite(clip.duration)) {
+        const song = clip;
+        ms = Math.min(8000, Math.max(2000, song.duration * 1000));
+        song.currentTime = 0;
+        song.play().catch(synth);
+        // Fade out as the splash leaves. iPhones ignore volume, so it is also cut off after the fade.
+        timers.push(setTimeout(() => {
+          const fade = setInterval(() => { try { song.volume = Math.max(0, song.volume - 0.1); } catch { /* fixed volume */ } }, 50);
+          timers.push(fade);
+          timers.push(setTimeout(() => { clearInterval(fade); song.pause(); }, 600));
+        }, ms - 150));
+      } else {
+        synth();
+      }
+      splash.style.setProperty("--len", ms + "ms");
+      splash.classList.add("go");
+      chaos(ms);
+      timers.push(setTimeout(arrive, ms));
+    });
+  } else {
+    arrive();
   }
 
   on(document, "click", (e) => {

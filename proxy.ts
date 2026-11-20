@@ -20,6 +20,6 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Skip only build assets, the icon and the logo shown on the sign-in page.
-  matcher: ["/((?!_next/|favicon\\.ico$|icon\\.svg$|apple-icon\\.png$|img/mercive-logo\\.svg$).*)"],
+  // Skip only build assets, the icons, and the logo and sound of the sign-in page.
+  matcher: ["/((?!_next/|favicon\\.ico$|icon\\.svg$|apple-icon\\.png$|img/mercive-logo\\.svg$|audio/).*)"],
 };

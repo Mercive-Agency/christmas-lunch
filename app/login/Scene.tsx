@@ -18,7 +18,8 @@ const FLIGHTS = [
 
 /**
  * The moving Christmas backdrop behind the sign-in form (see app/festive.js).
- * With `splash`, it opens with two seconds of chaos first.
+ * With `splash`, it opens with a "Tap to start" button, then two seconds of
+ * chaos with music. The tap is what lets the browser play sound.
  */
 export function Scene({ splash = false }: { splash?: boolean }) {
   useEffect(() => festive(), []);
@@ -26,22 +27,27 @@ export function Scene({ splash = false }: { splash?: boolean }) {
   return (
     <>
       {splash && (
-        <div id="splash" aria-hidden="true">
-          <div className="disco" />
+        <div id="splash">
+          <button type="button" id="splash-go" className="start">
+            <span>Tap to start</span>
+            <small>Sound on</small>
+          </button>
+          <div className="disco" aria-hidden="true" />
           {FLIGHTS.map(([x0, y0, x1, y1, spin, delay], i) => (
             <span
               key={i}
+              aria-hidden="true"
               className="fly run"
               style={{ "--x0": `${x0}vw`, "--y0": `${y0}vh`, "--x1": `${x1}vw`, "--y1": `${y1}vh`, "--spin": `${spin}deg`, animationDelay: `${delay}s` } as React.CSSProperties}
               dangerouslySetInnerHTML={{ __html: RUDOLF }}
             />
           ))}
-          <div className="boom">
+          <div className="boom" aria-hidden="true">
             <span><b>HO</b></span>
             <span><b>HO</b></span>
             <span><b>HO</b></span>
           </div>
-          <div className="boom-sub">Julefrokost!</div>
+          <div className="boom-sub" aria-hidden="true">Julefrokost!</div>
         </div>
       )}
       <div className="hill" aria-hidden="true" />
