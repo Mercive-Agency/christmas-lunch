@@ -33,4 +33,8 @@ COPY --from=build --chown=app:app /app/public ./public
 COPY --from=build --chown=app:app /app/private ./private
 USER app
 EXPOSE 3000
+# The front page redirects to sign-in, which a plain "is / answering 200?" check
+# reads as broken. This tells Coolify what healthy looks like.
+HEALTHCHECK --interval=10s --timeout=3s --start-period=15s --retries=3 \
+  CMD wget -q -O /dev/null http://127.0.0.1:3000/health || exit 1
 CMD ["node", "server.js"]

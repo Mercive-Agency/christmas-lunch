@@ -20,6 +20,7 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Skip only build assets, the icons, and the logo and sound of the sign-in page.
-  matcher: ["/((?!_next/|favicon\\.ico$|icon\\.svg$|apple-icon\\.png$|img/mercive-logo\\.svg$|audio/).*)"],
+  // Skip only build assets, the icons, the logo and sound of the sign-in page,
+  // robots.txt (which tells search engines to stay away) and /health.
+  matcher: ["/((?!_next/|favicon\\.ico$|icon\\.svg$|apple-icon\\.png$|img/mercive-logo\\.svg$|audio/|robots\\.txt$|health$).*)"],
 };
