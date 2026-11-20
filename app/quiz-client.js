@@ -49,7 +49,7 @@ const PEOPLE = [
 const QUOTES = [
   ["“Have a great day”", false],
   ["“Skal vi …” (fløjt)", true],
-  ["“Today, I will go through Christian’s list”", false],
+  ["“Jeg skal bare have min livret i aften, en BIF stadion pølse”", false],
   ["“Ej, Frank. Det er jo helt skanda det der”", false],
   ["“Ikke lige nu”", false],
 ];
