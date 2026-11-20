@@ -1,0 +1,560 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mercive Julefrokost</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one calm phone screen per slide in Mercive's own type (Mabry + Plex Mono) on deep Christmas red; the fun comes from Rudolf, the garland, snow and gift-wrapped answers. */
+@font-face { font-family: Mabry; src: url(fonts/mabry-light.woff2) format("woff2"); font-weight: 300; font-display: swap; }
+@font-face { font-family: Mabry; src: url(fonts/mabry-regular.woff2) format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: Mabry; src: url(fonts/mabry-medium.woff2) format("woff2"); font-weight: 500; font-display: swap; }
+:root {
+  color-scheme: dark;
+  --wine: #24060b;
+  --red: #4d0c16;
+  --glow: #8a1826;
+  --cream: #fbf3e4;
+  --rose: #e6c3bc;
+  --gold: #f1c46b;
+  --pine: #3fa877;
+  --nose: #ff2d3f;
+  --line: rgba(251, 243, 228, .18);
+  --veil: rgba(251, 243, 228, .07);
+  --sans: Mabry, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: radial-gradient(130% 75% at 50% 0%, var(--glow) 0%, var(--red) 45%, var(--wine) 100%) var(--wine);
+  color: var(--cream);
+  font-family: var(--sans); font-weight: 400; font-size: 17px; line-height: 1.45;
+  overflow: hidden; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased;
+}
+* { box-sizing: border-box; }
+button { font: inherit; color: inherit; cursor: pointer; border: 0; background: none; padding: 0; }
+button:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+#fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 40; }
+
+/* garland of warm lights */
+#garland { position: fixed; top: env(safe-area-inset-top, 0px); left: 0; width: 100%; height: 44px; z-index: 30; pointer-events: none; overflow: visible; }
+#garland path { fill: none; stroke: rgba(0, 0, 0, .45); stroke-width: 1.5; }
+#garland circle { fill: #ffe9b8; animation: twinkle 1.8s ease-in-out infinite alternate; filter: drop-shadow(0 0 5px #ffd98a); }
+#garland circle.r { fill: #ff6b78; filter: drop-shadow(0 0 5px #ff2d3f); }
+@keyframes twinkle { from { opacity: .3; } to { opacity: 1; } }
+
+/* snowy ground */
+.hill { position: fixed; left: 0; right: 0; bottom: 0; height: 130px; pointer-events: none;
+  background: radial-gradient(65% 100% at 15% 100%, rgba(255,255,255,.13) 0 99%, transparent 100%), radial-gradient(75% 80% at 88% 100%, rgba(255,255,255,.08) 0 99%, transparent 100%); }
+
+/* slides */
+.slide { position: absolute; inset: 0; overflow-y: auto; overscroll-behavior: contain; opacity: 0; visibility: hidden; transform: translateX(48px);
+  transition: opacity .4s, transform .55s cubic-bezier(.2, .8, .2, 1), visibility 0s .55s; }
+.slide.before { transform: translateX(-48px); }
+.slide.active { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+.in { min-height: 100%; max-width: 540px; margin: 0 auto;
+  padding-block: calc(env(safe-area-inset-top, 0px) + 64px) calc(env(safe-area-inset-bottom, 0px) + 104px);
+  padding-left: max(24px, env(safe-area-inset-left, 0px)); padding-right: max(24px, env(safe-area-inset-right, 0px));
+  display: flex; flex-direction: column; justify-content: center; gap: 18px; }
+.slide.active .in > * { animation: rise .7s cubic-bezier(.2, .8, .2, 1) both; }
+.slide.active .in > *:nth-child(2) { animation-delay: .08s; }
+.slide.active .in > *:nth-child(3) { animation-delay: .16s; }
+.slide.active .in > *:nth-child(4) { animation-delay: .24s; }
+.slide.active .in > *:nth-child(n+5) { animation-delay: .32s; }
+@keyframes rise { from { opacity: 0; transform: translateY(18px); } }
+
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--gold); margin: 0; }
+h1, h2 { margin: 0; font-weight: 300; letter-spacing: -.035em; line-height: 1; text-wrap: balance; }
+h1 { font-size: clamp(54px, 17vw, 104px); }
+h2 { font-size: clamp(38px, 11.5vw, 60px); }
+p { margin: 0; }
+.lead { font-size: 20px; font-weight: 300; color: var(--rose); }
+.center { text-align: center; align-items: center; }
+.glint { background: linear-gradient(100deg, var(--cream) 35%, var(--gold) 50%, var(--cream) 65%); background-size: 300% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent; animation: glint 5s linear infinite; }
+@keyframes glint { from { background-position: 100% 0; } to { background-position: -200% 0; } }
+.logo { display: block; width: 120px; height: 26px; background: var(--cream); -webkit-mask: url(img/mercive-logo.svg) center / contain no-repeat; mask: url(img/mercive-logo.svg) center / contain no-repeat; }
+
+/* Rudolf */
+.rud { display: block; width: 100%; height: auto; overflow: visible; }
+.rud .leg { transform-box: fill-box; transform-origin: 50% 0; }
+.run .leg { animation: leg .3s ease-in-out infinite alternate; }
+.run .leg.b { animation-direction: alternate-reverse; }
+@keyframes leg { from { transform: rotate(30deg); } to { transform: rotate(-30deg); } }
+.rud .eye { transform-box: fill-box; transform-origin: center; animation: blink 4.2s infinite; }
+@keyframes blink { 0%, 93%, 100% { transform: scaleY(1); } 96% { transform: scaleY(.1); } }
+.rud .nose { animation: nose 1.3s ease-in-out infinite alternate; }
+@keyframes nose { from { filter: drop-shadow(0 0 2px var(--nose)); } to { filter: drop-shadow(0 0 14px #ff6b78); } }
+.rud .tail { transform-box: fill-box; transform-origin: 100% 50%; animation: wag .5s ease-in-out infinite alternate; }
+@keyframes wag { from { transform: rotate(-18deg); } to { transform: rotate(18deg); } }
+.hero { width: min(250px, 62vw); display: block; }
+.hero.enter { animation: walkin 2s cubic-bezier(.25, .8, .3, 1) both; }
+@keyframes walkin { from { transform: translateX(-110vw); } }
+.hopper { display: block; }
+.run .hopper, .bob { animation: gallop .3s ease-in-out infinite alternate; }
+@keyframes gallop { from { transform: translateY(0) rotate(2deg); } to { transform: translateY(-9px) rotate(-3deg); } }
+.hop .hopper { animation: hop .6s cubic-bezier(.3, 1.6, .5, 1); }
+@keyframes hop { 30% { transform: translateY(-34px) rotate(-8deg); } 60% { transform: translateY(0) rotate(4deg); } }
+#runner { position: fixed; left: 0; bottom: calc(env(safe-area-inset-bottom, 0px) + 72px); width: 124px; transform: translateX(-170px); z-index: 38; pointer-events: none; }
+#runner.go { animation: cross 3.2s linear both; }
+#runner.flip.go { animation-direction: reverse; }
+#runner.flip .rud { transform: scaleX(-1); }
+@keyframes cross { from { transform: translateX(-170px); } to { transform: translateX(calc(100vw + 40px)); } }
+
+/* hanging bauble with the round number */
+.hang { align-self: flex-start; margin-top: -40px; padding-top: 70px; position: relative; transform-origin: 50% 0; animation: swing 2.6s ease-in-out infinite alternate; }
+.hang::before { content: ""; position: absolute; left: 50%; top: 0; width: 1px; height: 64px; background: var(--gold); opacity: .7; }
+.hang::after { content: ""; position: absolute; left: 50%; top: 60px; width: 14px; height: 12px; margin-left: -7px; border-radius: 3px 3px 0 0; background: #c9983f; }
+.hang b { display: grid; place-items: center; width: 92px; height: 92px; border-radius: 50%; font-weight: 300; font-size: 46px; letter-spacing: -.04em; color: var(--wine);
+  background: radial-gradient(circle at 34% 28%, #fffbe9 0%, var(--gold) 42%, #b98430 100%); box-shadow: 0 10px 30px rgba(0, 0, 0, .35), 0 0 34px rgba(241, 196, 107, .35); }
+@keyframes swing { from { transform: rotate(-7deg); } to { transform: rotate(7deg); } }
+
+/* rows */
+.rows { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
+.rows > * { border-top: 1px solid var(--line); padding: 13px 0; }
+.rows > *:last-child { border-bottom: 1px solid var(--line); }
+.rows li { font-size: 19px; font-weight: 300; }
+.team { display: grid; grid-template-columns: 76px 1fr; gap: 10px; align-items: baseline; }
+.tag { font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); display: flex; align-items: center; gap: 8px; }
+.dot { width: 9px; height: 9px; border-radius: 50%; background: var(--c); box-shadow: 0 0 10px var(--c); flex: none; }
+.team p { font-size: 16.5px; min-width: 0; }
+.round { display: flex; align-items: baseline; gap: 16px; width: 100%; text-align: left; font-size: 21px; font-weight: 300; }
+.round .tag { width: 22px; }
+.round:active { opacity: .6; }
+.fact { display: flex; flex-direction: column; gap: 4px; }
+.fact p { font-size: 16.5px; }
+
+/* gift-wrapped answers */
+.rev { position: relative; width: 100%; text-align: left; border-radius: 16px; padding: 16px 46px 16px 18px; display: flex; flex-direction: column; gap: 3px;
+  background: var(--cream); color: var(--red); box-shadow: 0 10px 28px rgba(0, 0, 0, .28); transition: transform .2s; overflow: hidden; }
+.rev::before { content: ""; position: absolute; top: 0; bottom: 0; right: 20px; width: 12px; background: var(--nose); }
+.rev::after { content: ""; position: absolute; top: 50%; right: 15px; width: 22px; height: 22px; margin-top: -11px; background: #c81f30; border-radius: 5px; transform: rotate(45deg); }
+.rev:active { transform: scale(.97); }
+.rev .tag { color: #a3303d; }
+.rev .hint { font-size: 17px; }
+.rev .a { display: none; }
+.rev.open { background: var(--veil); color: var(--cream); box-shadow: inset 0 0 0 1px var(--line); padding-right: 18px; animation: unwrap .5s cubic-bezier(.2, 1.5, .4, 1); }
+.rev.open::before, .rev.open::after, .rev.open .hint { display: none; }
+.rev.open .tag { color: var(--gold); }
+.rev.open .a { display: block; }
+@keyframes unwrap { from { transform: scale(.92) rotate(-1.5deg); } }
+.song { font-size: 15px; color: var(--rose); }
+.ans { font-size: 27px; font-weight: 300; letter-spacing: -.02em; line-height: 1.1; }
+.quote { font-size: 23px; font-weight: 300; letter-spacing: -.02em; line-height: 1.15; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.grid2 > * { min-width: 0; }
+.grid2 .rev { padding: 14px 34px 14px 14px; min-height: 104px; }
+.grid2 .rev::before { right: 12px; } .grid2 .rev::after { right: 7px; }
+.grid2 .rev.open { padding-right: 14px; }
+.rev.name { text-align: center; align-items: center; padding: 22px 46px; }
+.rev.name.open { padding: 22px 18px; }
+.rev.name .a { width: 100%; }
+.rev.name .ans { font-size: 52px; display: block; margin-top: 6px; }
+.ph { position: relative; display: block; width: min(230px, 70%); margin: 14px auto 0; }
+.ph img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 50%; border: 3px solid var(--cream); box-shadow: 0 0 40px rgba(241, 196, 107, .45); }
+.ph svg { position: absolute; width: 58%; left: 2%; top: -17%; transform: rotate(-16deg); overflow: visible; }
+.rev.open .ph { animation: spinin .8s cubic-bezier(.2, 1.4, .4, 1) both; }
+.rev.open .ph svg { animation: hat .6s .55s cubic-bezier(.3, 1.6, .5, 1) both; }
+@keyframes spinin { from { transform: scale(.2) rotate(-200deg); opacity: 0; } }
+@keyframes hat { from { transform: translateY(-90px) rotate(20deg); opacity: 0; } }
+.crew { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 14px; }
+.crew > span { display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 0; font-size: 19px; font-weight: 300; }
+.crew .ph { width: 100%; }
+.crew > span:nth-child(2) .ph { animation-delay: .12s; } .crew > span:nth-child(3) .ph { animation-delay: .24s; } .crew > span:nth-child(4) .ph { animation-delay: .36s; }
+
+/* host-only controls */
+body:not(.host) .hostonly { display: none !important; }
+body.host .guestonly { display: none !important; }
+.rev.nope { animation: nope .4s; }
+@keyframes nope { 20% { transform: translateX(-7px) rotate(-1deg); } 50% { transform: translateX(7px) rotate(1deg); } 80% { transform: translateX(-4px); } }
+#toast { position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 92px); transform: translate(-50%, 20px); z-index: 45; pointer-events: none; opacity: 0;
+  background: var(--cream); color: var(--red); padding: 10px 18px; border-radius: 999px; font-size: 15px; font-weight: 500; white-space: nowrap; transition: opacity .25s, transform .25s; }
+#toast.on { opacity: 1; transform: translate(-50%, 0); }
+
+/* stopwatch, buttons, scores */
+.clock { font-size: clamp(64px, 21vw, 104px); font-weight: 300; letter-spacing: -.04em; font-variant-numeric: tabular-nums; line-height: 1; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn { flex: 1; min-height: 52px; border-radius: 999px; padding: 10px 20px; font-weight: 500; background: var(--cream); color: var(--red); }
+.btn.ghost { background: transparent; color: var(--cream); box-shadow: inset 0 0 0 1px var(--line); }
+.btn:active { transform: scale(.97); }
+.score { display: flex; align-items: center; gap: 12px; }
+.score .tag { flex: 1; min-width: 0; font-size: 13px; }
+.score .pts { width: 2.2ch; text-align: center; font-size: 34px; font-weight: 300; letter-spacing: -.03em; font-variant-numeric: tabular-nums; line-height: 1; }
+.score.lead .pts { color: var(--gold); }
+.pm { width: 44px; height: 44px; border-radius: 50%; box-shadow: inset 0 0 0 1px var(--line); font-size: 22px; font-weight: 300; line-height: 1; }
+.pm.plus { background: var(--cream); color: var(--red); box-shadow: none; }
+.pm:active { transform: scale(.9); }
+#winner { font-size: 38px; font-weight: 300; letter-spacing: -.03em; line-height: 1.05; color: var(--gold); min-height: 1.1em; text-wrap: balance; }
+
+/* nav */
+.nav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 35; display: flex; align-items: center; gap: 16px;
+  padding: 14px max(20px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 14px) max(20px, env(safe-area-inset-left, 0px));
+  background: linear-gradient(transparent, var(--wine) 55%); }
+.nav button { width: 48px; height: 48px; border-radius: 50%; box-shadow: inset 0 0 0 1px var(--line); font-size: 20px; flex: none; }
+.nav #next { background: var(--cream); color: var(--red); box-shadow: none; }
+.nav button:disabled { opacity: .25; }
+.nav button:active { transform: scale(.92); }
+.prog { flex: 1; display: flex; flex-direction: column; gap: 8px; align-items: center; font-family: var(--mono); font-size: 12px; letter-spacing: .1em; color: var(--rose); }
+.bar { width: 100%; height: 1px; background: var(--line); }
+.bar i { display: block; height: 3px; margin-top: -1px; width: 0; background: var(--gold); border-radius: 2px; transition: width .5s; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .glint { color: var(--cream); background: none; }
+}
+</style>
+
+<div class="hill" aria-hidden="true"></div>
+<svg id="garland" aria-hidden="true"></svg>
+<main id="deck"></main>
+<div id="runner" aria-hidden="true"></div>
+<div id="toast" role="status"></div>
+<canvas id="fx" aria-hidden="true"></canvas>
+<nav class="nav" aria-label="Slides">
+  <button id="prev" aria-label="Previous slide">←</button>
+  <div class="prog"><span id="count">01 / 01</span><div class="bar"><i id="bar"></i></div></div>
+  <button id="next" aria-label="Next slide">→</button>
+</nav>
+
+<script>
+(function () {
+  // Host mode: open the page with #host-rudolf at the end of the link. Everyone else gets locked gifts.
+  var HOST = false;
+  try { HOST = sessionStorage.getItem('julefrokost-host') === '1'; } catch (e) {}
+  if (location.hash === '#host-rudolf') { HOST = true; try { sessionStorage.setItem('julefrokost-host', '1'); } catch (e) {} }
+  document.body.classList.toggle('host', HOST);
+  var COLORS = ['#ff6b78', '#f1c46b', '#3fa877', '#9fd8ee', '#fbf3e4'];
+  var HEX = ['#fbf3e4', '#f1c46b', '#3fa877', '#ff6b78', '#ffffff'];
+  var TEAMS = [
+    ['Hold 1', 'Alexander Weidinger, Mathilde Huss-Hansen, Jonas Blædel, Naomi From, Lucas Meyer'],
+    ['Hold 2', 'Simon Olesen, Anastasija Vlasova, Kristinn Jonsson, Elizabeth Jakobsen'],
+    ['Hold 3', 'Thea Thomsen, Emil Abrahamson, Andrea Hegner, Johannes Hvitved'],
+    ['Hold 4', 'Christian Dunbar, Magnus Madsen, Federico Barbieri, Vince Libasci'],
+    ['Hold 5', 'Cecilie Geisler, Madeleine Madsen, David Stenersen, Emilie Jørgensen, Lýður Hafsteinsson']
+  ];
+  var ROUNDS = [
+    ['r1', 'Who has the best stamina?'],
+    ['r2', 'Who is the best listener?'],
+    ['r3', 'Who knows everyone best?'],
+    ['r4', 'Who is the best swallower?'],
+    ['r5', 'Simon says']
+  ];
+  var CRIMES = [
+    [['Person', 'Boten Anna', 'Anna'], ['Location', 'Viva Las Vegas', 'Las Vegas'], ['Weapon', 'T.N.T. by AC/DC', 'A bomb'], ['Body', 'Disco Tits', 'Disco tits']],
+    [['Person', 'Hvalen Hvalborg', 'Hvalen Hvalborg'], ['Location', 'Murder on the Dancefloor', 'The dance floor'], ['Weapon', 'Umbrella', 'An umbrella'], ['Body', 'Klunker', 'Klunker']]
+  ];
+  var PEOPLE = [
+    ['Jonas', 'Developer. Arms crossed in the classic pose of “it works on my machine.”',
+      'Replies to a DM in four seconds and an email in four business days. The hair says “just woke up.” The commit history says “never slept.”',
+      'A striped shirt somewhere between Copenhagen-cool and pyjamas, plus a tiny pink embroidered logo nobody can identify. Shrimp? Seahorse? A lowercase S having a moment?',
+      '“Just one drink” at 19:00. Spotted at 02:00 pushing straight to the Spotify queue. No code review.'],
+    ['Thea', 'Management consultant. Has already sorted everyone at this party into a 2x2 matrix.',
+      'Has a five-year plan. It’s laminated. Can say “per my last email” out loud, with a smile.',
+      'A navy blazer in an office where crewnecks count as formalwear. A square gold watch that gets checked once per meeting, and that’s when the meeting ends.',
+      'Arrives with a seating plan nobody asked for. Everyone follows it. Before the taxis come, there’s a Monday debrief in the calendar.'],
+    ['Simon', 'Yacht broker. Has already sold two boats today, using only that smile.',
+      'Firm handshake, firmer calendar. Remembers your name, your dog’s name and your Q3 numbers.',
+      'A dive watch rated to 300 metres, angled perfectly for the camera, that has seen more board meetings than coral reefs. A shirt ironed sharp enough to cut the crackling on the flæskesteg.',
+      'Arrives with a wine nobody can pronounce. Gives a toast nobody asked for. It’s annoyingly good.'],
+    ['Johannes', 'Data analyst. Knows how many carts were abandoned this week and is waiting for the right moment to tell you.',
+      'Speaks once per meeting, and it’s always the line everyone quotes afterwards. Says “no stress” and means it, which is somehow worse.',
+      'A navy knit with a tiny chest logo the AI is fairly sure belongs to a Mercive client. Wearing the client’s brand to the photo shoot: a power move. Also missed the memo about crossing the arms.',
+      'Never seen dancing, never seen leaving. Somehow in the background of every photo from the night.'],
+    ['Lýður', 'Designer. That half-smile means something on this slide is two pixels off.',
+      'Has never used an exclamation mark. Not even in “Happy birthday.” Says “interesting” in a tone that means “let’s start over.”',
+      'A grey crewneck, one of five identical ones known collectively as “the design system.” Hair engineered to survive a Copenhagen headwind. One thin silver bracelet, the only accessory that made it through approval.',
+      'Quiet through dinner. At midnight, owns the dance floor without changing facial expression once. The office hasn’t had a ping pong table since that one Friday bar. Coincidence, says the defence.']
+  ];
+  var ROAST = ['Christian Dunbar', 'Magnus Madsen', 'Federico Barbieri', 'Vince Libasci'];
+  var QUOTES = [
+    ['“Ikke lige nu”', 'Christian'],
+    ['“Ej, Frank. Det er jo helt skanda det der”', 'Simon'],
+    ['“Have a great day”', null],
+    ['“Skal vi … (fløjt)”', null]
+  ];
+
+  function leg(x, c, cls) {
+    return '<g class="leg ' + cls + '"><rect x="' + x + '" y="112" width="11" height="58" rx="5.5" fill="' + c + '"/><rect x="' + x + '" y="160" width="11" height="10" rx="3" fill="#3a2114"/></g>';
+  }
+  var RUDOLF = '<svg class="rud" viewBox="0 0 220 176" aria-hidden="true">' +
+    leg(54, '#7d4a28', 'a') + leg(120, '#7d4a28', 'b') +
+    '<ellipse class="tail" cx="40" cy="96" rx="10" ry="6" fill="#f3e3c8"/>' +
+    '<ellipse cx="96" cy="104" rx="54" ry="30" fill="#b06f42"/><ellipse cx="98" cy="119" rx="34" ry="12" fill="#d9a877" opacity=".65"/>' +
+    leg(68, '#99603a', 'b') + leg(132, '#99603a', 'a') +
+    '<path d="M120 100 L140 50 L170 60 L148 114 Z" fill="#b06f42"/>' +
+    '<path d="M131 76 l35 11 l-4 13 l-35 -11 z" fill="#1f7a55"/><path d="M135 88 l-7 28 l12 3 l6 -27 z" fill="#1f7a55"/>' +
+    '<g fill="none" stroke="#ecd6ae" stroke-width="5" stroke-linecap="round"><path d="M150 36 C146 22 150 10 160 4 M149 24 l-12 -8 M153 13 l-9 -8"/><path d="M165 36 C171 22 181 16 193 16 M173 24 l1 -14 M183 18 l8 -10"/></g>' +
+    '<ellipse cx="143" cy="42" rx="12" ry="6" transform="rotate(-25 143 42)" fill="#99603a"/>' +
+    '<ellipse cx="162" cy="54" rx="24" ry="20" fill="#b06f42"/><ellipse cx="184" cy="64" rx="18" ry="13" fill="#d9a877"/>' +
+    '<circle cx="159" cy="63" r="5" fill="#ff8f9a" opacity=".5"/>' +
+    '<g class="eye"><circle cx="168" cy="48" r="4.2" fill="#1a1210"/><circle cx="169.4" cy="46.6" r="1.4" fill="#fff"/></g>' +
+    '<path d="M178 71 q8 6 16 0" stroke="#7d4a28" stroke-width="2.5" fill="none" stroke-linecap="round"/>' +
+    '<g class="nose"><circle cx="200" cy="58" r="9" fill="#ff2d3f"/><circle cx="197" cy="55" r="2.6" fill="#ffc2c8"/></g></svg>';
+  var HAT = '<svg viewBox="0 0 100 80" aria-hidden="true"><path d="M14 60 Q30 6 70 12 Q90 16 92 46 L82 44 Q78 30 64 30 Q76 44 80 60 Z" fill="#e0263a"/><rect x="6" y="56" width="80" height="17" rx="8.5" fill="#fbf3e4"/><circle cx="90" cy="48" r="9" fill="#fbf3e4"/></svg>';
+
+  function tag(t) { return '<span class="tag">' + t + '</span>'; }
+  function rev(k, hint, inner, cls) {
+    return '<button class="rev ' + (cls || '') + '">' + tag(k) + '<span class="hint">' + hint + '</span><span class="a">' + (HOST ? inner : '') + '</span></button>';
+  }
+  function pic(n) { return '<span class="ph"><img src="img/' + n.split(' ')[0].toLowerCase().replace('ý', 'y').replace('ð', 'd') + '.jpg" alt="Photo of ' + n + '">' + HAT + '</span>'; }
+  function fact(k, t) { return '<div class="fact">' + tag(k) + '<p>' + t + '</p></div>'; }
+  function rules(a) { return '<ul class="rows">' + a.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul>'; }
+  function intro(n, title, body) {
+    return '<div class="in"><div class="hang"><b>' + n + '</b></div><p class="eyebrow">Round ' + n + ' of 5</p><h2>' + title + '</h2>' + body + '</div>';
+  }
+
+  var S = [];
+  S.push(['title', '<div class="in center"><span class="logo" role="img" aria-label="Mercive"></span>' +
+    '<div><button class="hero" id="hero" aria-label="Boop Rudolf on the nose"><span class="hopper">' + RUDOLF + '</span></button></div>' +
+    '<p class="eyebrow">Christmas lunch 2026</p><h1 class="glint">Julefrokost</h1>' +
+    '<p class="lead">Five teams. Five rounds. One winner.</p><p class="eyebrow" style="color:var(--rose)">Psst. Boop the nose.</p></div>']);
+
+  S.push(['teams', '<div class="in"><p class="eyebrow">Find your people</p><h2>The teams</h2><div class="rows">' +
+    TEAMS.map(function (t, i) { return '<div class="team"><span class="tag"><i class="dot" style="--c:' + COLORS[i] + '"></i>' + t[0] + '</span><p>' + t[1] + '</p></div>'; }).join('') +
+    '</div></div>']);
+
+  S.push(['rounds', '<div class="in"><p class="eyebrow">Tonight’s programme</p><h2>Five rounds</h2><div class="rows">' +
+    ROUNDS.map(function (r, i) { return '<button class="round" data-go="' + r[0] + '">' + tag('0' + (i + 1)) + '<span>' + r[1] + '</span></button>'; }).join('') +
+    '</div></div>']);
+
+  S.push(['r1', intro(1, 'Who has the best stamina?',
+    rules(['Each team picks two people to compete.', 'Hold the object for as long as possible.', 'Last arm standing wins.']) +
+    '<div class="clock" id="clock">00:00.0</div><div class="row"><button class="btn" id="swGo">Start</button><button class="btn ghost" id="swReset">Reset</button></div>')]);
+
+  S.push(['r2', intro(2, 'Who is the best listener?',
+    '<p class="lead">A music quiz where every song is a clue to a murder.</p>' + rules(['Two murders to solve.', 'Name the person, the location, the weapon and the body.']))]);
+
+  CRIMES.forEach(function (c, i) {
+    S.push(['crime' + i, '<div class="in"><p class="eyebrow">Round 2 · Crime scene ' + (i + 1) + ' of 2</p><h2>' + (i ? 'The second murder' : 'The first murder') + '</h2><div class="grid2">' +
+      c.map(function (x, j) { return rev(x[0], 'Song ' + (j + 1), '<span class="song">' + x[1] + '</span><br><span class="ans">' + x[2] + '</span>'); }).join('') +
+      '</div><p class="eyebrow hostonly" style="color:var(--rose)">Tap a gift to unwrap the answer</p><p class="eyebrow guestonly" style="color:var(--rose)">The host unwraps the answers</p></div>']);
+  });
+
+  S.push(['r3', intro(3, 'Who knows everyone best?',
+    '<p class="lead">We showed an AI the team photos. It had opinions.</p>' + rules(['Listen to the description.', 'Guess which colleague it is.', 'One point per correct name.']))]);
+
+  PEOPLE.forEach(function (p, i) {
+    S.push(['who' + i, '<div class="in"><p class="eyebrow">Round 3 · Colleague ' + (i + 1) + ' of ' + PEOPLE.length + '</p><h2>Who is this?</h2>' +
+      '<div class="rows">' + fact('Job', p[1]) + fact('Personality', p[2]) + fact('Clues', p[3]) + fact('Party forecast', p[4]) + '</div>' +
+      rev('The answer', HOST ? 'Tap to unwrap' : 'The host unwraps this one', pic(p[0]) + '<span class="ans">' + p[0] + '</span>', 'name') + '</div>']);
+  });
+
+  S.push(['roast', '<div class="in"><p class="eyebrow">Round 3 · Roast the team</p><h2 class="glint">Gilet &amp; Partners</h2><div class="rows">' +
+    fact('What they are, according to the AI', 'The founding team of a startup selling carbon-neutral padel rackets. Pre-revenue. Post-vibe.') +
+    fact('The dynamic', 'The VC asks if it scales. The creative director says trust the process. Head of Sustainability asks about the carbon footprint. The padel coach books a court. Nothing gets decided, and everyone leaves happy.') +
+    fact('Last offsite', 'The padel coach wanted Lake Como, Head of Sustainability wanted somewhere you can cycle to, the creative director wanted “a vibe,” and the VC wanted ROI. They ended up at a padel hall in Glostrup.') +
+    fact('Party forecast', '23:00, found a startup. 23:30, close a pre-seed round with the bartender. 00:15, co-founder fight. 01:00, pivot to AI.') +
+    '</div>' + rev('The answer', HOST ? 'Tap to unwrap the team' : 'The host unwraps this one', '<span class="crew">' + ROAST.map(function (n) { return '<span>' + pic(n) + n + '</span>'; }).join('') + '</span>', 'name') + '</div>']);
+
+  S.push(['r4', intro(4, 'Who is the best swallower?',
+    '<p class="lead">Bund en genstand.</p>' + rules(['We bring the drinks.', 'You bring the technique.', 'Fastest empty glass wins. Skål!']))]);
+
+  S.push(['r5', intro(5, 'Simon says',
+    '<p class="lead">Office classics. Who says it?</p><div class="grid1" style="display:flex;flex-direction:column;gap:12px">' +
+    QUOTES.map(function (q) {
+      return q[1] ? rev('Who says it?', '<span class="quote">' + q[0] + '</span>', '<span class="song">' + q[0] + '</span><br><span class="ans">' + q[1] + '</span>')
+        : '<div class="rev open" style="animation:none">' + tag('Classic') + '<span class="quote">' + q[0] + '</span></div>';
+    }).join('') + '</div>')]);
+
+  S.push(['score', '<div class="in"><p class="eyebrow">The moment of truth</p><h2>Scoreboard</h2><div class="rows hostonly" id="board"></div>' +
+    '<div id="winner" aria-live="polite"></div><p class="lead guestonly">The score is kept on the host’s screen.</p><div class="row hostonly"><button class="btn" id="crown">Crown the winner</button><button class="btn ghost" id="wipe">Reset scores</button></div></div>']);
+
+  var deck = document.getElementById('deck');
+  deck.innerHTML = S.map(function (s) { return '<section class="slide" data-k="' + s[0] + '">' + s[1] + '</section>'; }).join('');
+  var slides = [].slice.call(deck.children), cur = -1;
+  var reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  // ---------- garland ----------
+  function garland() {
+    var w = window.innerWidth, n = Math.max(3, Math.round(w / 110)), sw = w / n, d = 'M0 2', c = '', k = 0;
+    for (var i = 0; i < n; i++) {
+      var x0 = i * sw;
+      d += ' Q' + (x0 + sw / 2) + ' 40 ' + (x0 + sw) + ' 2';
+      [0.2, 0.5, 0.8].forEach(function (t) {
+        var y = 2 * (1 - t) * (1 - t) + 2 * 40 * t * (1 - t) + 2 * t * t;
+        c += '<circle' + (k % 4 === 1 ? ' class="r"' : '') + ' cx="' + (x0 + sw * t).toFixed(1) + '" cy="' + (y + 4).toFixed(1) + '" r="3.6" style="animation-delay:' + ((k * 0.37) % 1.8).toFixed(2) + 's"/>';
+        k++;
+      });
+    }
+    document.getElementById('garland').innerHTML = '<path d="' + d + '"/>' + c;
+  }
+  garland();
+
+  // ---------- particles: snow, sparkles, confetti ----------
+  var cv = document.getElementById('fx'), ctx = cv.getContext('2d'), W = 0, H = 0, flakes = [], parts = [];
+  function size() {
+    var d = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth; H = window.innerHeight;
+    cv.width = W * d; cv.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0);
+  }
+  size(); window.addEventListener('resize', function () { size(); garland(); });
+  for (var i = 0; i < (reduced ? 0 : 60); i++) flakes.push({ x: Math.random() * 2000, y: Math.random() * 2000, r: .8 + Math.random() * 2.4, v: .3 + Math.random() * .9, p: Math.random() * 6.3 });
+  function sparkle(x, y, n, soft) {
+    if (reduced) return;
+    for (var i = 0; i < n; i++) {
+      var a = Math.random() * 6.283, v = soft ? Math.random() * 1.5 : 2 + Math.random() * 5;
+      parts.push({ x: x, y: y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - (soft ? 0 : 2), life: 1, d: .015 + Math.random() * .02, s: (soft ? 2 : 3) + Math.random() * 5, c: HEX[i % 2], star: 1, rot: Math.random() * 6 });
+    }
+  }
+  function confetti(n) {
+    if (reduced) return;
+    for (var i = 0; i < n; i++)
+      parts.push({ x: Math.random() * W, y: -20 - Math.random() * H * .5, vx: (Math.random() - .5) * 3, vy: 2 + Math.random() * 4, life: 1, d: .004 + Math.random() * .004, s: 6 + Math.random() * 7, c: HEX[i % 5], star: 0, rot: Math.random() * 6 });
+  }
+  function star(x, y, r, rot) {
+    ctx.beginPath();
+    for (var i = 0; i < 8; i++) { var rr = i % 2 ? r * .3 : r, a = rot + i * Math.PI / 4; ctx.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); }
+    ctx.closePath(); ctx.fill();
+  }
+  var t = 0;
+  function frame() {
+    t += .016; ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = 'rgba(255,255,255,.8)';
+    for (var i = 0; i < flakes.length; i++) {
+      var f = flakes[i];
+      f.y += f.v; f.x += Math.sin(t + f.p) * .4;
+      if (f.y > H + 5) { f.y = -5; f.x = Math.random() * W; }
+      if (f.x > W + 5) f.x = -5; if (f.x < -5) f.x = W + 5;
+      ctx.beginPath(); ctx.arc(f.x, f.y, f.r, 0, 6.283); ctx.fill();
+    }
+    for (i = parts.length - 1; i >= 0; i--) {
+      var p = parts[i];
+      p.x += p.vx; p.y += p.vy; p.rot += .1; p.life -= p.d;
+      if (p.star) { p.vy += .14; p.vx *= .98; } else { p.vx += Math.sin(t * 3 + p.rot) * .08; }
+      if (p.life <= 0 || p.y > H + 30) { parts.splice(i, 1); continue; }
+      ctx.globalAlpha = Math.min(1, p.life * 1.5); ctx.fillStyle = p.c;
+      if (p.star) star(p.x, p.y, p.s, p.rot);
+      else { ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot); ctx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2 * Math.abs(Math.cos(p.rot)) + 2); ctx.restore(); }
+      ctx.globalAlpha = 1;
+    }
+    requestAnimationFrame(frame);
+  }
+  if (!reduced) requestAnimationFrame(frame);
+
+  // ---------- Rudolf ----------
+  var runner = document.getElementById('runner'), flip = false, trail = 0;
+  runner.innerHTML = '<div class="bob run">' + RUDOLF + '</div>';
+  function gallop() {
+    if (reduced) return;
+    clearInterval(trail);
+    runner.classList.remove('go'); void runner.offsetWidth;
+    flip = !flip; runner.classList.toggle('flip', flip); runner.classList.add('go');
+    var t0 = Date.now();
+    trail = setInterval(function () {
+      var r = runner.getBoundingClientRect();
+      sparkle(flip ? r.right : r.left, r.top + r.height * .55, 2, true);
+      if (Date.now() - t0 > 3200) clearInterval(trail);
+    }, 60);
+  }
+  var hero = document.getElementById('hero'), heroT = 0;
+  function heroIn() {
+    if (reduced) return;
+    clearTimeout(heroT);
+    hero.classList.remove('enter', 'run'); void hero.offsetWidth;
+    hero.classList.add('enter', 'run');
+    heroT = setTimeout(function () { hero.classList.remove('run'); }, 1900);
+  }
+  hero.onclick = function () {
+    var r = hero.getBoundingClientRect();
+    hero.classList.remove('hop'); void hero.offsetWidth; hero.classList.add('hop');
+    sparkle(r.left + r.width * .91, r.top + r.height * .33, 40);
+  };
+
+  // ---------- navigation ----------
+  function go(n) {
+    n = Math.max(0, Math.min(slides.length - 1, n));
+    if (n === cur) return;
+    cur = n;
+    slides.forEach(function (s, i) { s.classList.toggle('active', i === cur); s.classList.toggle('before', i < cur); });
+    slides[cur].scrollTop = 0;
+    document.getElementById('count').textContent = (HOST ? 'Host · ' : '') + pad(cur + 1) + ' / ' + pad(slides.length);
+    document.getElementById('bar').style.width = ((cur + 1) / slides.length * 100) + '%';
+    document.getElementById('prev').disabled = cur === 0;
+    document.getElementById('next').disabled = cur === slides.length - 1;
+    var k = slides[cur].dataset.k;
+    if (k === 'title') heroIn();
+    else if (/^r\d$/.test(k) || k === 'score') gallop();
+  }
+  function goKey(k) { for (var i = 0; i < slides.length; i++) if (slides[i].dataset.k === k) return go(i); }
+  document.getElementById('prev').onclick = function () { go(cur - 1); };
+  document.getElementById('next').onclick = function () { go(cur + 1); };
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') go(cur + 1);
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') go(cur - 1);
+  });
+  var tx = 0, ty = 0;
+  deck.addEventListener('touchstart', function (e) { tx = e.touches[0].clientX; ty = e.touches[0].clientY; }, { passive: true });
+  deck.addEventListener('touchend', function (e) {
+    var dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty;
+    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.6) go(cur + (dx < 0 ? 1 : -1));
+  }, { passive: true });
+
+  var toastEl = document.getElementById('toast'), toastT = 0;
+  function toast(m) { toastEl.textContent = m; toastEl.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(function () { toastEl.classList.remove('on'); }, 1800); }
+
+  // ---------- taps ----------
+  document.addEventListener('click', function (e) {
+    var r = e.target.closest('button.rev'), g = e.target.closest('[data-go]'), pm = e.target.closest('.pm');
+    if (g) { goKey(g.dataset.go); return; }
+    if (r && !HOST) {
+      r.classList.remove('nope'); void r.offsetWidth; r.classList.add('nope');
+      toast('No peeking. The host unwraps this one.');
+      return;
+    }
+    if (r) {
+      if (r.classList.toggle('open')) { sparkle(e.clientX, e.clientY, 34); if (r.classList.contains('name')) { confetti(140); gallop(); } }
+      return;
+    }
+    if (pm) {
+      var ix = +pm.dataset.i;
+      scores[ix] = Math.max(0, scores[ix] + (+pm.dataset.d));
+      save(); board(); sparkle(e.clientX, e.clientY, 10);
+      return;
+    }
+    if (!e.target.closest('button')) sparkle(e.clientX, e.clientY, 12);
+  });
+
+  // ---------- stopwatch ----------
+  var swT0 = 0, swAcc = 0, swOn = false, clock = document.getElementById('clock'), swGo = document.getElementById('swGo');
+  function swDraw() {
+    var ms = swAcc + (swOn ? Date.now() - swT0 : 0), s = Math.floor(ms / 1000);
+    clock.textContent = pad(Math.floor(s / 60)) + ':' + pad(s % 60) + '.' + Math.floor(ms % 1000 / 100);
+  }
+  setInterval(function () { if (swOn) swDraw(); }, 100);
+  swGo.onclick = function () {
+    if (swOn) { swAcc += Date.now() - swT0; swOn = false; swGo.textContent = 'Start'; }
+    else { swT0 = Date.now(); swOn = true; swGo.textContent = 'Stop'; }
+    swDraw();
+  };
+  document.getElementById('swReset').onclick = function () { swOn = false; swAcc = 0; swGo.textContent = 'Start'; swDraw(); };
+
+  // ---------- scoreboard ----------
+  var scores = [0, 0, 0, 0, 0];
+  try { var sv = JSON.parse(localStorage.getItem('julefrokost-scores')); if (sv && sv.length === 5) scores = sv; } catch (e) {}
+  function save() { try { localStorage.setItem('julefrokost-scores', JSON.stringify(scores)); } catch (e) {} }
+  function board() {
+    var max = Math.max.apply(null, scores);
+    document.getElementById('board').innerHTML = TEAMS.map(function (t, i) {
+      return '<div class="score' + (max > 0 && scores[i] === max ? ' lead' : '') + '"><span class="tag"><i class="dot" style="--c:' + COLORS[i] + '"></i>' + t[0] + '</span>' +
+        '<button class="pm hostonly" data-i="' + i + '" data-d="-1" aria-label="Minus one for ' + t[0] + '">−</button><span class="pts">' + scores[i] + '</span>' +
+        '<button class="pm plus hostonly" data-i="' + i + '" data-d="1" aria-label="Plus one for ' + t[0] + '">+</button></div>';
+    }).join('');
+  }
+  board();
+  var winner = document.getElementById('winner'), wipe = document.getElementById('wipe'), armed = false;
+  document.getElementById('crown').onclick = function () {
+    var max = Math.max.apply(null, scores), top = TEAMS.filter(function (t, i) { return scores[i] === max; }).map(function (t) { return t[0]; });
+    if (max === 0) { winner.textContent = 'No points yet.'; return; }
+    winner.textContent = top.length > 1 ? 'A tie between ' + top.join(' and ') + '. Sudden death!' : top[0] + ' wins. Glædelig jul!';
+    confetti(280); sparkle(W / 2, H / 2, 60); gallop();
+  };
+  wipe.onclick = function () {
+    if (!armed) { armed = true; wipe.textContent = 'Tap again to reset'; setTimeout(function () { armed = false; wipe.textContent = 'Reset scores'; }, 3000); return; }
+    armed = false; wipe.textContent = 'Reset scores'; scores = [0, 0, 0, 0, 0]; save(); board(); winner.textContent = '';
+  };
+
+  go(0);
+})();
+</script>

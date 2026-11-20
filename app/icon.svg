@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108">
+  <rect width="108" height="108" fill="#1d1d1d"/>
+  <!-- The M and the mark from the Mercive wordmark (app/brand.tsx), moved together. -->
+  <g fill="#ffffff" transform="translate(0 14)">
+    <path d="m59.638,63.7989V20.3516l-13.9385,43.4473h-11.5586l-13.9385-43.4473v43.4473h-7.4795V16.2042h13.9385l13.2588,41.8154,13.2588-41.8154h13.9385v47.5947h-7.4795Z"/>
+    <g transform="translate(-255 0)">
+      <path d="m338.7023,16.2042h2.3425l-4.2623,13.4402h-4.6081l-4.2626-13.4402h2.3425l4.224,13.3251,4.224-13.3251Z"/>
+      <path d="m341.4865,29.6444h-2.3425l4.2623-13.4402h4.6081l4.2626,13.4402h-2.3425l-4.224-13.3251-4.224,13.3251Z"/>
+    </g>
+  </g>
+</svg>

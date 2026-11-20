@@ -1,0 +1,14 @@
+/node_modules
+/.next/
+/out/
+.DS_Store
+*.tsbuildinfo
+next-env.d.ts
+.vercel
+
+# local stand-in for the shared quiz state (lib/quiz-state.ts)
+/.data
+
+# env files: never commit keys (only the placeholder example)
+.env*
+!.env.example
