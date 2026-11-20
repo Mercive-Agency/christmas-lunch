@@ -217,6 +217,13 @@ export function start(master) {
   S.push(["score", '<div class="in"><p class="eyebrow">The moment of truth</p><h2>Scoreboard</h2><div class="rows" id="board"></div>' +
     '<div id="winner" aria-live="polite"></div><div class="row hostonly"><button class="btn" id="crown">Crown the winner</button><button class="btn ghost" id="wipe">Reset the game</button></div></div>']);
 
+  // The hosts' points panel: give points from any slide without moving anyone.
+  const sheet = $("sheet"), shade = $("shade");
+  sheet.innerHTML = '<p class="eyebrow">Points · only hosts see this</p><div class="rows" id="sheetBoard"></div>' +
+    '<div class="row"><button class="btn" id="showScore">Show scoreboard to everyone</button><button class="btn ghost" id="sheetClose">Close</button></div>';
+  let back = null;   // the slide to return to after showing the scoreboard
+  function panel(open) { sheet.classList.toggle("on", open); shade.classList.toggle("on", open); }
+
   const deck = $("deck");
   deck.innerHTML = S.map((s) => '<section class="slide" data-k="' + s[0] + '">' + s[1] + "</section>").join("");
   const slides = [].slice.call(deck.children);
@@ -347,6 +354,8 @@ export function start(master) {
     $("prev").disabled = cur === 0;
     $("next").disabled = cur === slides.length - 1;
     const k = slides[cur].dataset.k;
+    if (k !== "score") back = null;
+    $("showScore").textContent = k === "score" && back !== null ? "Back to slide " + pad(back + 1) : "Show scoreboard to everyone";
     if (k === "title") heroIn();
     else if (k === "best") { confetti(200); gallop(); }
     else if (/^r\d$/.test(k) || k === "score") gallop();
@@ -354,7 +363,7 @@ export function start(master) {
 
   function board(scores) {
     const max = Math.max.apply(null, scores);
-    $("board").innerHTML = TEAMS.map((team, i) =>
+    $("board").innerHTML = $("sheetBoard").innerHTML = TEAMS.map((team, i) =>
       '<div class="score' + (max > 0 && scores[i] === max ? " lead" : "") + '"><span class="tag"><i class="dot" style="--c:' + COLORS[i] + '"></i>' + team[0] + "</span>" +
       '<button class="pm hostonly" data-i="' + i + '" data-d="-1" aria-label="Minus one for ' + team[0] + '">−</button><span class="pts">' + scores[i] + "</span>" +
       '<button class="pm plus hostonly" data-i="' + i + '" data-d="1" aria-label="Plus one for ' + team[0] + '">+</button></div>').join("");
@@ -481,6 +490,15 @@ export function start(master) {
       return;
     }
     if (pm) { send({ type: "score", team: +pm.dataset.i, delta: +pm.dataset.d }); sparkle(e.clientX, e.clientY, 10); return; }
+    if (target.closest("#pts")) { panel(!sheet.classList.contains("on")); return; }
+    if (target.closest("#sheetClose") || target.closest("#shade")) { panel(false); return; }
+    if (target.closest("#showScore")) {
+      const scoreAt = slides.length - 1;
+      if (cur === scoreAt && back !== null) { const to = back; steer(to); }
+      else if (cur !== scoreAt) { const from = cur; steer(scoreAt); back = from; show(cur); $("showScore").textContent = "Back to slide " + pad(from + 1); }
+      panel(false);
+      return;
+    }
     if (target.closest("#swGo")) { send({ type: "sw", op: "toggle" }); return; }
     if (target.closest("#swReset")) { send({ type: "sw", op: "reset" }); return; }
     if (target.closest("#crown")) { send({ type: "crown" }); return; }
@@ -511,6 +529,8 @@ export function start(master) {
     timers.forEach((id) => { clearInterval(id); clearTimeout(id); });
     clearInterval(trail); clearTimeout(heroT); clearTimeout(toastT);
     deck.innerHTML = "";
+    sheet.innerHTML = "";
+    panel(false);
     runner.innerHTML = "";
     document.body.classList.remove("host");
   };

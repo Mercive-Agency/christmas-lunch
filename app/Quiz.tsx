@@ -16,9 +16,14 @@ export default function Quiz({ master }: { master: boolean }) {
       <div id="runner" aria-hidden="true" />
       <div id="toast" role="status" />
       <canvas id="fx" aria-hidden="true" />
+      <div id="shade" className="hostonly" />
+      <section id="sheet" className="hostonly" aria-label="Points" />
       <nav className="nav" aria-label="Slides">
         <button id="prev" className="hostonly" aria-label="Previous slide">
           ←
+        </button>
+        <button id="pts" className="hostonly" aria-label="Open the points panel">
+          Pts
         </button>
         <div className="prog">
           <span id="count">01</span>

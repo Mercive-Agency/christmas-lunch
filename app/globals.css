@@ -331,3 +331,15 @@ body:not(.host) .prog { align-items: center; }
   animation: slam .35s 1s cubic-bezier(.2, 1.9, .4, 1) both, tilt .25s 1.35s ease-in-out infinite alternate; }
 @keyframes tilt { from { transform: rotate(-7deg) scale(1); } to { transform: rotate(7deg) scale(1.12); } }
 @media (prefers-reduced-motion: reduce) { #splash { display: none; } }
+
+/* The hosts' points panel: slides up over any slide, moves nobody */
+.nav #pts { font-family: var(--mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); }
+#shade { position: fixed; inset: 0; z-index: 44; background: rgba(0, 0, 0, .45); opacity: 0; pointer-events: none; transition: opacity .25s; }
+#shade.on { opacity: 1; pointer-events: auto; }
+#sheet { position: fixed; left: 0; right: 0; bottom: 0; z-index: 46; background: var(--red); border-top: 1px solid var(--line); border-radius: 26px 26px 0 0;
+  padding: 20px max(20px, env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 20px) max(20px, env(safe-area-inset-left, 0px));
+  display: flex; flex-direction: column; gap: 12px; max-height: 92%; overflow-y: auto; box-shadow: 0 -20px 60px rgba(0, 0, 0, .5);
+  transform: translateY(105%); transition: transform .35s cubic-bezier(.2, .9, .3, 1); }
+#sheet.on { transform: none; }
+#sheet .rows > * { padding: 9px 0; }
+#sheet .btn { font-size: 15px; min-height: 48px; padding: 8px 14px; }
